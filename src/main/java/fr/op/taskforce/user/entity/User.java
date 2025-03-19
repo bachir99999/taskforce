@@ -1,5 +1,6 @@
 package fr.op.taskforce.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import fr.op.taskforce.task.entity.Task;
 import jakarta.persistence.*;
 
@@ -23,6 +24,7 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "assignedTo")
+    @JsonManagedReference
     private List<Task> taskList;
 
     public User() {}

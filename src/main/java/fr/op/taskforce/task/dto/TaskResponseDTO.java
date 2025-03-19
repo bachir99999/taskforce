@@ -5,5 +5,5 @@ import fr.op.taskforce.user.dto.UserResponseDTO;
 
 import java.time.LocalDate;
 
-public record TaskResponseDTO(String name, String description, LocalDate dueDate, Task.Status status, UserResponseDTO userResponseDTO) {
+public record TaskResponseDTO(Integer id, String name, String description, LocalDate dueDate, Task.Status status, UserResponseDTO assignedTo) {
 }

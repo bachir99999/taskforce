@@ -4,6 +4,7 @@ import fr.op.taskforce.task.dto.TaskDTO;
 import fr.op.taskforce.task.dto.TaskResponseDTO;
 import fr.op.taskforce.task.entity.Task;
 import fr.op.taskforce.user.UserMapper;
+import fr.op.taskforce.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,11 +12,13 @@ import java.util.List;
 @Service
 public class TaskService {
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
     private final TaskMapper taskMapper;
     private final UserMapper userMapper;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
         this.taskMapper = new TaskMapper();
         this.userMapper = new UserMapper();
     }
@@ -30,7 +33,8 @@ public class TaskService {
     }
 
     public TaskResponseDTO saveTask(TaskDTO taskDTO) {
-        return taskMapper.taskToTaskResponseDTO(taskRepository.save(taskMapper.taskDTOToTask(taskDTO)));
+        var assignedUser = userRepository.findById(taskDTO.assignedToId()).orElse(null);
+        return taskMapper.taskToTaskResponseDTO(taskRepository.save(taskMapper.taskDTOToTask(taskDTO, assignedUser)));
     }
 
     public TaskResponseDTO updateTask(Integer id, TaskDTO taskDTO) {
@@ -39,7 +43,7 @@ public class TaskService {
             existingTask.setDescription(taskDTO.description());
             existingTask.setDueDate(taskDTO.dueDate());
             existingTask.setStatus(taskDTO.status());
-            existingTask.setAssignedTo(userMapper.userDTOToUser(taskDTO.userDTO()));
+            existingTask.setAssignedTo(userRepository.findById(taskDTO.assignedToId()).orElse(null));
             return  taskMapper.taskToTaskResponseDTO(taskRepository.save(existingTask));
     }
 
@@ -50,7 +54,7 @@ public class TaskService {
         if (taskDTO.description() != null) existingTask.setDescription(taskDTO.description());
         if (taskDTO.dueDate() != null) existingTask.setDueDate(taskDTO.dueDate());
         if (taskDTO.status() != null) existingTask.setStatus(taskDTO.status());
-        if (taskDTO.userDTO() != null) existingTask.setAssignedTo(userMapper.userDTOToUser(taskDTO.userDTO()));
+        if (taskDTO.assignedToId() != null) existingTask.setAssignedTo(userRepository.findById(taskDTO.assignedToId()).orElse(null));
 
         return  taskMapper.taskToTaskResponseDTO(taskRepository.save(existingTask));
     }

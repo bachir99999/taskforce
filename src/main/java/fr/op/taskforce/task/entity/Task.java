@@ -1,5 +1,6 @@
 package fr.op.taskforce.task.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import fr.op.taskforce.user.entity.User;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -27,6 +28,7 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User assignedTo;
 
     public enum Status {

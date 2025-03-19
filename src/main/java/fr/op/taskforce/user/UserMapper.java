@@ -9,7 +9,7 @@ import java.util.List;
 public class UserMapper {
 
     public UserResponseDTO userToResponseDTO(User user) {
-        return user != null ? new UserResponseDTO(user.getName(), user.getEmail()) : null;
+        return user != null ? new UserResponseDTO(user.getId(), user.getName(), user.getEmail()) : null;
     }
 
     public User userDTOToUser(UserDTO userDTO) {

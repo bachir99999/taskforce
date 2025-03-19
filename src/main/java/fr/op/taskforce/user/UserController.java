@@ -1,5 +1,6 @@
 package fr.op.taskforce.user;
 
+import fr.op.taskforce.task.dto.TaskResponseDTO;
 import fr.op.taskforce.user.dto.UserDTO;
 import fr.op.taskforce.user.dto.UserResponseDTO;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,12 @@ public class UserController {
     public UserResponseDTO getUserByUsername(@PathVariable String username) {
         return userService.findByName(username);
     }
+
+    @GetMapping("/{id}/tasks")
+    public List<TaskResponseDTO> getUserTasks(@PathVariable Integer id) {
+        return userService.getUserTasks(id);
+    }
+
 
     @GetMapping
     public List<UserResponseDTO> getAllUsers() {

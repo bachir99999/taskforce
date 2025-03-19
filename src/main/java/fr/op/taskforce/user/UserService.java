@@ -1,5 +1,7 @@
 package fr.op.taskforce.user;
 
+import fr.op.taskforce.task.TaskMapper;
+import fr.op.taskforce.task.dto.TaskResponseDTO;
 import fr.op.taskforce.user.dto.UserDTO;
 import fr.op.taskforce.user.dto.UserResponseDTO;
 import fr.op.taskforce.user.entity.User;
@@ -11,10 +13,12 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final TaskMapper taskMapper;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
         this.userMapper = new UserMapper();
+        this.taskMapper = new TaskMapper();
     }
 
     public UserResponseDTO save(UserDTO userDTO) {
@@ -60,5 +64,10 @@ public class UserService {
 
     public UserResponseDTO findByName(String username) {
         return userMapper.userToResponseDTO(userRepository.findByName(username));
+    }
+
+    public List<TaskResponseDTO> getUserTasks(Integer userId) {
+        var user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        return taskMapper.taskListToTaskResponseDTOList(user.getTaskList());
     }
 }

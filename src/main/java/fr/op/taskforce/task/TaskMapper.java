@@ -5,9 +5,11 @@ import fr.op.taskforce.task.dto.TaskResponseDTO;
 import fr.op.taskforce.task.entity.Task;
 import fr.op.taskforce.user.UserMapper;
 import fr.op.taskforce.user.entity.User;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class TaskMapper {
     private final UserMapper userMapper;
     public TaskMapper() {

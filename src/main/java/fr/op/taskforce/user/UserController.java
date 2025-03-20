@@ -3,6 +3,9 @@ package fr.op.taskforce.user;
 import fr.op.taskforce.task.dto.TaskResponseDTO;
 import fr.op.taskforce.user.dto.UserDTO;
 import fr.op.taskforce.user.dto.UserResponseDTO;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,55 +21,55 @@ public class UserController {
     }
 
     @PostMapping
-    public UserResponseDTO createUser(@RequestBody UserDTO userDTO) {
-        return userService.save(userDTO);
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserDTO userDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(userDTO));
     }
 
-
     @PostMapping("/batch")
-    public List<UserResponseDTO> createUsers(@RequestBody List<UserDTO> usersDTO) {
-        return userService.saveAll(usersDTO);
+    public ResponseEntity<List<UserResponseDTO>> createUsers(@Valid @RequestBody List<UserDTO> usersDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveAll(usersDTO));
     }
 
     @GetMapping("/{id}")
-    public UserResponseDTO getUserById(@PathVariable Integer id) {
-        return userService.findById(id);
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Integer id) {
+        return ResponseEntity.ok(userService.findById(id));
     }
 
     @GetMapping("/name/{username}")
-    public UserResponseDTO getUserByUsername(@PathVariable String username) {
-        return userService.findByName(username);
+    public ResponseEntity<UserResponseDTO> getUserByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(userService.findByName(username));
     }
 
     @GetMapping("/{id}/tasks")
-    public List<TaskResponseDTO> getUserTasks(@PathVariable Integer id) {
-        return userService.getUserTasks(id);
+    public ResponseEntity<List<TaskResponseDTO>> getUserTasks(@PathVariable Integer id) {
+        return ResponseEntity.ok(userService.getUserTasks(id));
     }
 
-
     @GetMapping
-    public List<UserResponseDTO> getAllUsers() {
-        return userService.findAll();
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.findAll());
     }
 
     @PutMapping("/{id}")
-    public UserResponseDTO updateUser(@PathVariable Integer id, @RequestBody UserDTO updatedUser) {
-        return userService.update(id, updatedUser);
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Integer id, @Valid @RequestBody UserDTO updatedUser) {
+        return ResponseEntity.ok(userService.update(id, updatedUser));
     }
 
     @PatchMapping("/{id}")
-    public UserResponseDTO partialUpdateUser(@PathVariable Integer id, @RequestBody UserDTO partialUser) {
-        return userService.partialUpdate(id, partialUser);
+    public ResponseEntity<UserResponseDTO> partialUpdateUser(@PathVariable Integer id, @Valid @RequestBody UserDTO partialUser) {
+        return ResponseEntity.ok(userService.partialUpdate(id, partialUser));
     }
 
 
     @DeleteMapping("/{id}")
-    public void deleteUserById(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteUserById(@PathVariable Integer id) {
         userService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/batch")
-    public void deleteUsers(@RequestBody List<Integer> ids) {
+    public ResponseEntity<Void> deleteUsers(@RequestBody List<Integer> ids) {
         userService.deleteAllByIds(ids);
+        return ResponseEntity.noContent().build();
     }
 }

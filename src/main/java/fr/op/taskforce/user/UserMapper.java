@@ -3,9 +3,11 @@ package fr.op.taskforce.user;
 import fr.op.taskforce.user.dto.UserDTO;
 import fr.op.taskforce.user.dto.UserResponseDTO;
 import fr.op.taskforce.user.entity.User;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class UserMapper {
 
     public UserResponseDTO userToResponseDTO(User user) {

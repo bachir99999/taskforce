@@ -15,10 +15,10 @@ public class UserService {
     private final UserMapper userMapper;
     private final TaskMapper taskMapper;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, TaskMapper taskMapper) {
         this.userRepository = userRepository;
-        this.userMapper = new UserMapper();
-        this.taskMapper = new TaskMapper();
+        this.userMapper = userMapper;
+        this.taskMapper = taskMapper;
     }
 
     public UserResponseDTO save(UserDTO userDTO) {
@@ -26,11 +26,13 @@ public class UserService {
     }
 
     public List<UserResponseDTO> saveAll(List<UserDTO> userDTOList) {
-        return  userMapper.usersToResponseDTOs(userRepository.saveAll(userMapper.usersDTOToUsers(userDTOList)));
+        return userMapper.usersToResponseDTOs(userRepository.saveAll(userMapper.usersDTOToUsers(userDTOList)));
     }
 
     public UserResponseDTO findById(Integer id) {
-        return userMapper.userToResponseDTO(userRepository.findById(id).orElse(null));
+        return userRepository.findById(id)
+                .map(userMapper::userToResponseDTO)
+                .orElseThrow(() -> new RuntimeException("User not found with id " + id));
     }
 
     public List<UserResponseDTO> findAll() {
@@ -38,15 +40,20 @@ public class UserService {
     }
 
     public void deleteById(Integer id) {
+        if (!userRepository.existsById(id)) {
+            throw new RuntimeException("User not found with id " + id);
+        }
         userRepository.deleteById(id);
     }
 
-    public void deleteAllByIds(List<Integer> ids){
+    public void deleteAllByIds(List<Integer> ids) {
         userRepository.deleteAllById(ids);
     }
 
     public UserResponseDTO update(Integer id, UserDTO updatedUser) {
-        var existingUser = userRepository.findById(id).orElse(new User());
+        var existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id " + id));
+
         existingUser.setName(updatedUser.name());
         existingUser.setEmail(updatedUser.email());
         existingUser.setPassword(updatedUser.password());
@@ -54,13 +61,15 @@ public class UserService {
     }
 
     public UserResponseDTO partialUpdate(Integer id, UserDTO partialUser) {
-        var existingUser = userRepository.findById(id).orElse(null);
-        if (existingUser == null) return null;
+        var existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found with id " + id));
+
         if (partialUser.name() != null) existingUser.setName(partialUser.name());
         if (partialUser.email() != null) existingUser.setEmail(partialUser.email());
         if (partialUser.password() != null) existingUser.setPassword(partialUser.password());
         return userMapper.userToResponseDTO(userRepository.save(existingUser));
     }
+
 
     public UserResponseDTO findByName(String username) {
         return userMapper.userToResponseDTO(userRepository.findByName(username));

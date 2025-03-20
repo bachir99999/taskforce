@@ -23,7 +23,7 @@ public class Task {
     private LocalDate dueDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 10)
     private Status status;
 
     @ManyToOne

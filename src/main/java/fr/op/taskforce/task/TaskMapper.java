@@ -12,8 +12,8 @@ import java.util.List;
 @Component
 public class TaskMapper {
     private final UserMapper userMapper;
-    public TaskMapper() {
-        userMapper = new UserMapper();
+    public TaskMapper(UserMapper userMapper) {
+        this.userMapper = userMapper;
     }
     public TaskResponseDTO taskToTaskResponseDTO(Task task) {
         return task != null ?

@@ -4,6 +4,10 @@ import fr.op.taskforce.task.TaskMapper;
 import fr.op.taskforce.task.dto.TaskResponseDTO;
 import fr.op.taskforce.user.dto.UserDTO;
 import fr.op.taskforce.user.dto.UserResponseDTO;
+import fr.op.taskforce.config.JWTService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +19,18 @@ public class UserService {
     private final UserMapper userMapper;
     private final TaskMapper taskMapper;
     private final BCryptPasswordEncoder encoder;
+    private final AuthenticationManager authenticationManager;
+    private final JWTService jwtService;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, TaskMapper taskMapper) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, TaskMapper taskMapper, AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder, JWTService jwtService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.taskMapper = taskMapper;
-        this.encoder = new BCryptPasswordEncoder();
+        this.encoder = bCryptPasswordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
+
 
     public UserResponseDTO save(UserDTO userDTO) {
         var user = userMapper.userDTOToUser(userDTO);
@@ -82,5 +91,18 @@ public class UserService {
     public List<TaskResponseDTO> getUserTasks(Integer userId) {
         var user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         return taskMapper.taskListToTaskResponseDTOList(user.getTaskList());
+    }
+
+    public String verify(UserDTO userDTO) {
+        var auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(userDTO.name(), userDTO.password())
+        );
+
+        if (!auth.isAuthenticated()) {
+            throw new BadCredentialsException("Authentication failed for user: " + userDTO.name());
+
+        }
+
+        return jwtService.generateToken(userDTO.name());
     }
 }

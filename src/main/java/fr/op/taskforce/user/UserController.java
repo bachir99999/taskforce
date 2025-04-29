@@ -25,6 +25,16 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(userDTO));
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<UserResponseDTO> registerUser(@Valid @RequestBody UserDTO userDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(userDTO));
+    }
+
+    @PostMapping("/login")
+    public String loginUsers(@Valid @RequestBody UserDTO userDTO) {
+        return userService.verify(userDTO);
+    }
+
     @PostMapping("/batch")
     public ResponseEntity<List<UserResponseDTO>> createUsers(@Valid @RequestBody List<UserDTO> usersDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveAll(usersDTO));

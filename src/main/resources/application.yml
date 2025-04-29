@@ -12,3 +12,6 @@ spring:
       hibernate:
         format_sql: true
     database: postgresql
+  jwt:
+    secret: bXlzZWNyZXRrZXl0aGF0aXN2ZXJ5c2VjdXJlIQ==
+    expiration: 36000000

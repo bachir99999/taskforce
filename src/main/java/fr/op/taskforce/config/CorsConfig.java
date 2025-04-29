@@ -15,10 +15,10 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // autoriser tous les endpoints
-                        .allowedOrigins("http://localhost:5173") // autoriser ton frontend
+                        .allowedOrigins("http://localhost:5173") // autoriser le frontend
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true); // si tu utilises les cookies / sessions
+                        .allowCredentials(true); // cookies
             }
         };
     }

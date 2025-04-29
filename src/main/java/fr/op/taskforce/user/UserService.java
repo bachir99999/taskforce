@@ -4,7 +4,7 @@ import fr.op.taskforce.task.TaskMapper;
 import fr.op.taskforce.task.dto.TaskResponseDTO;
 import fr.op.taskforce.user.dto.UserDTO;
 import fr.op.taskforce.user.dto.UserResponseDTO;
-import fr.op.taskforce.user.entity.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,15 +14,19 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final TaskMapper taskMapper;
+    private final BCryptPasswordEncoder encoder;
 
     public UserService(UserRepository userRepository, UserMapper userMapper, TaskMapper taskMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.taskMapper = taskMapper;
+        this.encoder = new BCryptPasswordEncoder();
     }
 
     public UserResponseDTO save(UserDTO userDTO) {
-        return userMapper.userToResponseDTO(userRepository.save(userMapper.userDTOToUser(userDTO)));
+        var user = userMapper.userDTOToUser(userDTO);
+        user.setPassword(encoder.encode(user.getPassword()));
+        return userMapper.userToResponseDTO(userRepository.save(user));
     }
 
     public List<UserResponseDTO> saveAll(List<UserDTO> userDTOList) {

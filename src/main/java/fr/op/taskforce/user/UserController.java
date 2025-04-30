@@ -2,13 +2,17 @@ package fr.op.taskforce.user;
 
 import fr.op.taskforce.task.dto.TaskResponseDTO;
 import fr.op.taskforce.user.dto.UserDTO;
+import fr.op.taskforce.user.dto.UserLoginDTO;
 import fr.op.taskforce.user.dto.UserResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -31,8 +35,18 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String loginUsers(@Valid @RequestBody UserDTO userDTO) {
-        return userService.verify(userDTO);
+    public ResponseEntity<Map<String, String>> loginUsers(@Valid @RequestBody UserLoginDTO userLoginDTO) {
+        try {
+            String token = userService.verify(userLoginDTO);
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
+            response.put("type", "Bearer");
+            return ResponseEntity.ok(response);
+        } catch (BadCredentialsException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Invalid username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        }
     }
 
     @PostMapping("/batch")

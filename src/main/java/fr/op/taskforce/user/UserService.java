@@ -1,10 +1,11 @@
 package fr.op.taskforce.user;
 
+import fr.op.taskforce.config.JWTService;
 import fr.op.taskforce.task.TaskMapper;
 import fr.op.taskforce.task.dto.TaskResponseDTO;
 import fr.op.taskforce.user.dto.UserDTO;
+import fr.op.taskforce.user.dto.UserLoginDTO;
 import fr.op.taskforce.user.dto.UserResponseDTO;
-import fr.op.taskforce.config.JWTService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -93,16 +94,15 @@ public class UserService {
         return taskMapper.taskListToTaskResponseDTOList(user.getTaskList());
     }
 
-    public String verify(UserDTO userDTO) {
+    public String verify(UserLoginDTO userLginDTO) {
         var auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userDTO.name(), userDTO.password())
+                new UsernamePasswordAuthenticationToken(userLginDTO.name(), userLginDTO.password())
         );
 
         if (!auth.isAuthenticated()) {
-            throw new BadCredentialsException("Authentication failed for user: " + userDTO.name());
-
+            throw new BadCredentialsException("Authentication failed for user: " + userLginDTO.name());
         }
 
-        return jwtService.generateToken(userDTO.name());
+        return jwtService.generateToken(userLginDTO.name());
     }
 }

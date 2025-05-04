@@ -1,4 +1,4 @@
-package fr.op.taskforce.config;
+package fr.op.taskforce.auth;
 
 import fr.op.taskforce.userprincipal.UserPrincipalService;
 import jakarta.servlet.FilterChain;

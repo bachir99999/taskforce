@@ -1,14 +1,9 @@
 package fr.op.taskforce.user;
 
-import fr.op.taskforce.config.JWTService;
 import fr.op.taskforce.task.TaskMapper;
 import fr.op.taskforce.task.dto.TaskResponseDTO;
 import fr.op.taskforce.user.dto.UserDTO;
-import fr.op.taskforce.user.dto.UserLoginDTO;
 import fr.op.taskforce.user.dto.UserResponseDTO;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,16 +15,13 @@ public class UserService {
     private final UserMapper userMapper;
     private final TaskMapper taskMapper;
     private final BCryptPasswordEncoder encoder;
-    private final AuthenticationManager authenticationManager;
-    private final JWTService jwtService;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, TaskMapper taskMapper, AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder, JWTService jwtService) {
+
+    public UserService(UserRepository userRepository, UserMapper userMapper, TaskMapper taskMapper, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.taskMapper = taskMapper;
         this.encoder = bCryptPasswordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
     }
 
 
@@ -94,15 +86,4 @@ public class UserService {
         return taskMapper.taskListToTaskResponseDTOList(user.getTaskList());
     }
 
-    public String verify(UserLoginDTO userLginDTO) {
-        var auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userLginDTO.name(), userLginDTO.password())
-        );
-
-        if (!auth.isAuthenticated()) {
-            throw new BadCredentialsException("Authentication failed for user: " + userLginDTO.name());
-        }
-
-        return jwtService.generateToken(userLginDTO.name());
-    }
 }

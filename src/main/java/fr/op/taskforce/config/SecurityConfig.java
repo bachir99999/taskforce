@@ -1,5 +1,6 @@
 package fr.op.taskforce.config;
 
+import fr.op.taskforce.auth.JWTFilter;
 import fr.op.taskforce.userprincipal.UserPrincipalService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

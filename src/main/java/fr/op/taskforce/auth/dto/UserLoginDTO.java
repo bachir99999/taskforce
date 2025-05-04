@@ -1,4 +1,4 @@
-package fr.op.taskforce.user.dto;
+package fr.op.taskforce.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

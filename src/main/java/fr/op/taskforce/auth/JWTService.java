@@ -1,4 +1,4 @@
-package fr.op.taskforce.config;
+package fr.op.taskforce.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -68,16 +68,25 @@ public class JWTService {
 
     public boolean validateToken(String token, UserDetails userDetails) {
         final String userName = extractUserName(token);
-        return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return (userName.equals(userDetails.getUsername()) && isTokenExpired(token));
     }
 
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
+
 
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    public boolean isTokenValid(String token) {
+        try {
+            String username = extractUserName(token);
+            return username != null && isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
+    private boolean isTokenExpired(String token) {
+        return !extractExpiration(token).before(new Date());
+    }
 }
